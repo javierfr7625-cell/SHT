@@ -28,9 +28,14 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState('tareas'); 
   const [subView, setSubView] = useState(null); // 'importar'
 
-  // Language state (loaded from local storage)
+  // Language state
   const [lang, setLang] = useState(() => {
     return localStorage.getItem('sht_lang') || 'es';
+  });
+
+  // Theme state
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('sht_theme') || 'default';
   });
 
   // Profiles state
@@ -40,6 +45,8 @@ function AppContent() {
   // Habits state
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [preSelectedEditHabit, setPreSelectedEditHabit] = useState(null);
+  const [triggerAddOpen, setTriggerAddOpen] = useState(false);
 
   // Sync language preferences to localStorage
   const handleSetLang = (newLang) => {
@@ -47,7 +54,16 @@ function AppContent() {
     localStorage.setItem('sht_lang', newLang);
   };
 
-  // Load user profiles and active habits on mount / profile change
+  // Sync theme changes to body element classes
+  useEffect(() => {
+    // Remove existing themes
+    document.body.classList.remove('theme-default', 'theme-classic-dark', 'theme-light', 'theme-emerald');
+    // Add current theme class
+    document.body.classList.add(`theme-${theme}`);
+    localStorage.setItem('sht_theme', theme);
+  }, [theme]);
+
+  // Load user profiles and active habits
   const loadProfileData = async () => {
     if (!user) return;
     setLoading(true);
@@ -70,7 +86,7 @@ function AppContent() {
     }
   }, [user, activeProfile]);
 
-  // Profile management handlers
+  // Profile handlers
   const handleAddProfile = async (newProfileName) => {
     const updatedProfiles = [...profiles, newProfileName];
     setProfiles(updatedProfiles);
@@ -135,7 +151,8 @@ function AppContent() {
     const defaultData = {
       nombre: name,
       dias: [0, 1, 2, 3, 4, 5, 6],
-      horaSugerida: '08:00'
+      horaSugerida: '08:00',
+      importancia: 'media'
     };
     await handleCreateHabit(defaultData);
   };
@@ -166,19 +183,18 @@ function AppContent() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-main)] flex items-center justify-center">
         <RefreshCw className="w-10 h-10 text-purple-500 animate-spin" />
       </div>
     );
   }
 
   if (!user) {
-    return <Auth />;
+    return <Auth lang={lang} setLang={handleSetLang} />;
   }
 
   // Views Router
   const renderView = () => {
-    // If routing through tab selection 'importar' or subview 'importar'
     if (subView === 'importar' || activeTab === 'importar') {
       return (
         <ImportarRutinas
@@ -205,6 +221,14 @@ function AppContent() {
             onSaveDay={handleSaveDay} 
             onQuickCreate={handleQuickCreate}
             lang={lang}
+            onEditClick={(habit) => {
+              setPreSelectedEditHabit(habit);
+              setActiveTab('gestionar');
+            }}
+            onAddClick={() => {
+              setTriggerAddOpen(true);
+              setActiveTab('gestionar');
+            }}
           />
         );
       case 'gestionar':
@@ -215,6 +239,10 @@ function AppContent() {
             onUpdateHabit={handleUpdateHabit}
             onDeleteHabit={handleDeleteHabit}
             lang={lang}
+            initialEditingHabit={preSelectedEditHabit}
+            clearInitialEditingHabit={() => setPreSelectedEditHabit(null)}
+            initialOpenCreate={triggerAddOpen}
+            clearInitialOpenCreate={() => setTriggerAddOpen(false)}
           />
         );
       case 'resumen':
@@ -232,6 +260,8 @@ function AppContent() {
             onAddProfile={handleAddProfile}
             onDeleteProfile={handleDeleteProfile}
             setView={setSubView}
+            theme={theme}
+            setTheme={setTheme}
           />
         );
       default:
@@ -245,20 +275,12 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row relative">
-      {/* Top Banner indicating Demo Mode */}
-      {user.isDemo && (
-        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-amber-600/90 to-amber-500/90 text-slate-950 text-[10px] font-extrabold uppercase py-1 text-center tracking-widest z-50 flex items-center justify-center gap-1.5 shadow-md">
-          <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-          {translations[lang].ajustes.demo_alert}
-        </div>
-      )}
-
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] flex flex-col md:flex-row relative transition-colors duration-200">
       {/* Main navigation */}
       <Navbar activeTab={subView ? 'importar' : activeTab} setActiveTab={handleTabChange} lang={lang} />
 
       {/* Primary content area */}
-      <main className="flex-1 p-4 md:p-8 overflow-y-auto min-h-screen pt-10 md:pt-8 bg-slate-950">
+      <main className="flex-1 p-2.5 sm:p-5 md:p-8 overflow-y-auto min-h-screen pt-4 sm:pt-6 md:pt-8 bg-[var(--bg-main)] transition-colors duration-200">
         {renderView()}
       </main>
     </div>

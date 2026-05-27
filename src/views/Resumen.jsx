@@ -82,11 +82,11 @@ export default function Resumen({ habits, lang = 'es' }) {
     const record = habit.history?.[dateStr];
 
     if (inFuture) {
-      return { status: 'future', style: 'border border-slate-800 bg-slate-900/10' };
+      return { status: 'future', style: 'border border-[var(--border-color)] bg-[var(--bg-main)] opacity-30' };
     }
 
     if (!isScheduled) {
-      return { status: 'unscheduled', style: 'bg-slate-800/20 border border-slate-800/40 text-slate-700' };
+      return { status: 'unscheduled', style: 'bg-[var(--bg-main)] border border-[var(--border-color)] opacity-40' };
     }
 
     if (record?.completado) {
@@ -108,24 +108,24 @@ export default function Resumen({ habits, lang = 'es' }) {
     <div className="space-y-6 max-w-4xl mx-auto pb-20 md:pb-0 relative">
       {/* Tooltip Popup container */}
       {hoveredDay && (
-        <div className="fixed bottom-24 right-4 left-4 sm:absolute sm:bottom-auto sm:right-auto z-40 bg-slate-950 border border-amber-500/40 p-3.5 rounded-2xl shadow-xl max-w-sm pointer-events-none animate-fadeIn">
+        <div className="fixed bottom-24 right-4 left-4 sm:absolute sm:bottom-auto sm:right-auto z-40 bg-[var(--bg-panel)] border border-amber-500/40 p-3.5 rounded-2xl shadow-xl max-w-sm pointer-events-none animate-fadeIn">
           <p className="text-xs font-semibold text-amber-400 flex items-center gap-1.5 mb-1 uppercase tracking-wider">
             <AlertCircle className="w-3.5 h-3.5" /> {lang === 'es' ? 'Justificación' : 'Justification'} ({hoveredDay.dateStr})
           </p>
-          <p className="text-sm text-slate-200 italic font-light">"{hoveredDay.note}"</p>
+          <p className="text-sm text-[var(--text-main)] italic font-light opacity-90">"{hoveredDay.note}"</p>
         </div>
       )}
 
       {/* Top Section */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
+      <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="space-y-3 flex-1">
           <span className="text-purple-400 text-xs font-bold uppercase tracking-widest">{t.title}</span>
-          <h2 className="text-2xl font-bold text-white font-outfit">{t.progress_general}</h2>
-          <p className="text-slate-400 text-sm">{t.subtitle}</p>
+          <h2 className="text-2xl font-bold text-[var(--text-title)] font-outfit">{t.progress_general}</h2>
+          <p className="text-[var(--text-muted)] text-sm">{t.subtitle}</p>
           <div className="flex flex-wrap gap-4 pt-3 text-xs font-medium">
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-emerald-500"></span> {t.legend_completed} ({completedToday})</span>
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-amber-400"></span> {t.legend_justified} ({justifiedToday})</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-slate-700"></span> {t.legend_pending} ({pendingToday})</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[var(--border-color)]"></span> {t.legend_pending} ({pendingToday})</span>
           </div>
         </div>
 
@@ -150,13 +150,13 @@ export default function Resumen({ habits, lang = 'es' }) {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute text-center">
-                <span className="block text-3xl font-extrabold text-white font-outfit">{percentageCompleted}%</span>
-                <span className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">{t.legend_completed}</span>
+                <span className="block text-3xl font-extrabold text-[var(--text-title)] font-outfit">{percentageCompleted}%</span>
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-semibold">{t.legend_completed}</span>
               </div>
             </>
           ) : (
-            <div className="text-center text-slate-500 text-xs p-4 border border-dashed border-slate-800 rounded-full w-full h-full flex flex-col items-center justify-center">
-              <Calendar className="w-8 h-8 mb-1.5 text-slate-700" />
+            <div className="text-center text-[var(--text-muted)] text-xs p-4 border border-dashed border-[var(--border-color)] rounded-full w-full h-full flex flex-col items-center justify-center">
+              <Calendar className="w-8 h-8 mb-1.5 text-[var(--text-muted)]" />
               <span>{lang === 'es' ? 'Sin hábitos' : 'No habits'}</span>
             </div>
           )}
@@ -164,21 +164,21 @@ export default function Resumen({ habits, lang = 'es' }) {
       </div>
 
       {/* Habit Calendars List */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-        <h3 className="text-lg font-bold text-white mb-4">{t.history_title}</h3>
+      <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl p-6 shadow-xl space-y-4">
+        <h3 className="text-lg font-bold text-[var(--text-title)] mb-4">{t.history_title}</h3>
 
         <div className="space-y-3">
           {habits.map((habit) => {
             const isExpanded = expandedHabitId === habit.id;
             return (
-              <div key={habit.id} className="border border-slate-800/80 rounded-2xl overflow-hidden bg-slate-950/20">
+              <div key={habit.id} className="border border-[var(--border-color)] rounded-2xl overflow-hidden bg-[var(--bg-input)]">
                 <button
                   onClick={() => handleToggleExpand(habit.id)}
-                  className="w-full flex items-center justify-between p-5 hover:bg-slate-800/30 transition-colors text-left cursor-pointer"
+                  className="w-full flex items-center justify-between p-5 hover:bg-[var(--bg-panel-hover)] transition-colors text-left cursor-pointer"
                 >
                   <div>
-                    <h4 className="font-bold text-white text-base font-outfit">{habit.nombre}</h4>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <h4 className="font-bold text-[var(--text-title)] text-base font-outfit">{habit.nombre}</h4>
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">
                       {t.frequency}: {habit.dias.length === 7 ? (lang === 'es' ? 'Diario' : 'Daily') : `${habit.dias.length} ${lang === 'es' ? 'días/semana' : 'days/week'}`}
                     </p>
                   </div>
@@ -190,16 +190,16 @@ export default function Resumen({ habits, lang = 'es' }) {
                 </button>
 
                 {isExpanded && (
-                  <div className="p-6 border-t border-slate-800 bg-slate-900/20 space-y-6">
+                  <div className="p-6 border-t border-[var(--border-color)] bg-[var(--bg-panel-hover)]/30 space-y-6">
                     {/* Legend */}
-                    <div className="flex flex-wrap gap-4 text-xs font-semibold text-slate-400 justify-between items-center border-b border-slate-800 pb-4">
+                    <div className="flex flex-wrap gap-4 text-xs font-semibold text-[var(--text-muted)] justify-between items-center border-b border-[var(--border-color)] pb-4">
                       <div className="flex items-center gap-3">
                         <span className="flex items-center gap-1.5"><span className="w-3.5 h-3.5 rounded bg-emerald-500"></span> {t.legend_completed}</span>
                         <span className="flex items-center gap-1.5"><span className="w-3.5 h-3.5 rounded bg-amber-400"></span> {t.legend_justified}</span>
                         <span className="flex items-center gap-1.5"><span className="w-3.5 h-3.5 rounded bg-rose-500"></span> {t.legend_missed}</span>
-                        <span className="flex items-center gap-1.5"><span className="w-3.5 h-3.5 rounded bg-slate-800/40"></span> {t.legend_rest}</span>
+                        <span className="flex items-center gap-1.5"><span className="w-3.5 h-3.5 rounded bg-[var(--bg-main)] border border-[var(--border-color)]"></span> {t.legend_rest}</span>
                       </div>
-                      <div className="text-[10px] text-slate-500 flex items-center gap-1">
+                      <div className="text-[10px] text-[var(--text-muted)] flex items-center gap-1">
                         <Info className="w-3.5 h-3.5 text-purple-500/80" />
                         {t.tooltip_info}
                       </div>
@@ -216,10 +216,10 @@ export default function Resumen({ habits, lang = 'es' }) {
 
                         return (
                           <div key={month.name} className="space-y-2">
-                            <h5 className="text-xs font-bold text-slate-400 uppercase tracking-widest">{month.name}</h5>
+                            <h5 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">{month.name}</h5>
                             
                             {/* Calendar Grid Header */}
-                            <div className="grid grid-cols-7 gap-1 text-[9px] font-bold text-slate-600 text-center">
+                            <div className="grid grid-cols-7 gap-1 text-[9px] font-bold text-[var(--text-muted)] text-center opacity-60">
                               <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
                             </div>
 
@@ -260,7 +260,7 @@ export default function Resumen({ habits, lang = 'es' }) {
                                     }}
                                   >
                                     {info.status === 'unscheduled' && (
-                                      <div className="absolute inset-1.5 rounded-full bg-slate-800"></div>
+                                      <div className="absolute inset-1.5 rounded-full bg-[var(--border-color)] opacity-30"></div>
                                     )}
                                   </div>
                                 );

@@ -1,15 +1,63 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
-/* Apply global styles */
+:root {
+  /* Default Slate/Indigo/Purple Theme */
+  --bg-main: #020617; /* slate-950 */
+  --bg-panel: #0f172a; /* slate-900 */
+  --bg-panel-hover: #1e293b; /* slate-800 */
+  --bg-input: #020617; /* slate-950 */
+  --border-color: #1e293b; /* slate-800 */
+  --text-main: #f1f5f9; /* slate-100 */
+  --text-muted: #94a3b8; /* slate-400 */
+  --text-title: #ffffff;
+}
+
+body.theme-classic-dark {
+  /* Charcoal #333 style Theme */
+  --bg-main: #121212;
+  --bg-panel: #242424; /* #333 style */
+  --bg-panel-hover: #333333;
+  --bg-input: #1a1a1a;
+  --border-color: #2e2e2e;
+  --text-main: #e0e0e0;
+  --text-muted: #8e8e8e;
+  --text-title: #ffffff;
+}
+
+body.theme-light {
+  /* Light Theme */
+  --bg-main: #f8fafc;
+  --bg-panel: #ffffff;
+  --bg-panel-hover: #f1f5f9;
+  --bg-input: #f8fafc;
+  --border-color: #e2e8f0;
+  --text-main: #334155;
+  --text-muted: #64748b;
+  --text-title: #0f172a;
+}
+
+body.theme-emerald {
+  /* Forest Emerald Theme */
+  --bg-main: #022c22;
+  --bg-panel: #064e3b;
+  --bg-panel-hover: #0f766e;
+  --bg-input: #022c22;
+  --border-color: #115e59;
+  --text-main: #f0fdf4;
+  --text-muted: #a7f3d0;
+  --text-title: #ffffff;
+}
+
+/* Apply global styles using CSS variables */
 body {
   font-family: 'Outfit', sans-serif;
-  background-color: #020617; /* bg-slate-950 */
-  color: #f1f5f9; /* text-slate-100 */
+  background-color: var(--bg-main);
+  color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition-property: color, background-color;
-  transition-duration: 300ms;
+  transition-duration: 200ms;
 }
 
 /* Custom Scrollbar */
@@ -18,14 +66,14 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #020617;
+  background: var(--bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: var(--border-color);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: var(--bg-panel-hover);
 }
 
 /* Custom animation utils */
@@ -45,4 +93,13 @@ body {
 
 .animate-scaleIn {
   animation: scaleIn 0.2s ease-out forwards;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

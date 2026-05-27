@@ -54,19 +54,17 @@ export default function ImportarRutinas({
   const [communityRoutines, setCommunityRoutines] = useState([]);
   const [loadingCommunity, setLoadingCommunity] = useState(false);
   const [selectedRoutine, setSelectedRoutine] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
-  // Import settings
   const [importTarget, setImportTarget] = useState('current');
   const [newProfileName, setNewProfileName] = useState('');
   const [importing, setImporting] = useState(false);
   
-  // Share routine modal settings
   const [isSharingModalOpen, setIsSharingModalOpen] = useState(false);
   const [shareRoutineName, setShareRoutineName] = useState('');
   const [sharingError, setSharingError] = useState('');
   const [sharing, setSharing] = useState(false);
 
-  // Feedback notifications
   const [feedbackMsg, setFeedbackMsg] = useState('');
   const [feedbackError, setFeedbackError] = useState('');
 
@@ -89,6 +87,17 @@ export default function ImportarRutinas({
     loadCommunity();
   }, []);
 
+  useEffect(() => {
+    if (selectedRoutine || isSharingModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedRoutine, isSharingModalOpen]);
+
   const openShareModal = () => {
     if (activeProfileHabits.length === 0) {
       setFeedbackError(lang === 'es' ? 'No puedes compartir un perfil que no tiene hábitos.' : 'Cannot share a profile with no habits.');
@@ -109,7 +118,6 @@ export default function ImportarRutinas({
       return;
     }
 
-    // Validate that the routine name does not already exist in the community gallery (case-insensitive)
     const exists = communityRoutines.some(
       r => r.nombre.toLowerCase() === nameToPublish.toLowerCase()
     );
@@ -191,13 +199,13 @@ export default function ImportarRutinas({
       <div className="flex items-center gap-3">
         <button
           onClick={() => setView('ajustes')}
-          className="p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-2xl text-slate-400 hover:text-slate-200 transition cursor-pointer"
+          className="p-2.5 bg-[var(--bg-panel)] hover:bg-[var(--bg-panel-hover)] border border-[var(--border-color)] rounded-2xl text-[var(--text-muted)] hover:text-[var(--text-main)] transition cursor-pointer"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
           <span className="text-purple-400 text-xs font-bold uppercase tracking-widest font-outfit">Librería</span>
-          <h2 className="text-3xl font-extrabold text-white font-outfit">{t.title}</h2>
+          <h2 className="text-3xl font-extrabold text-[var(--text-title)] font-outfit">{t.title}</h2>
         </div>
       </div>
 
@@ -214,13 +222,13 @@ export default function ImportarRutinas({
       )}
 
       {/* Share Section */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl p-6 shadow-xl flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="space-y-1">
-          <h3 className="font-bold text-white text-lg flex items-center gap-2 font-outfit">
+          <h3 className="font-bold text-[var(--text-title)] text-lg flex items-center gap-2 font-outfit">
             <Share2 className="w-5 h-5 text-purple-400" />
             {t.share_routine}
           </h3>
-          <p className="text-slate-400 text-xs max-w-xl">
+          <p className="text-[var(--text-muted)] text-xs max-w-xl">
             {t.share_desc}
           </p>
         </div>
@@ -233,8 +241,8 @@ export default function ImportarRutinas({
       </div>
 
       {/* Default Routines */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-        <h3 className="text-lg font-bold text-white flex items-center gap-2 font-outfit">
+      <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl p-6 shadow-xl space-y-4">
+        <h3 className="text-lg font-bold text-[var(--text-title)] flex items-center gap-2 font-outfit">
           <BookOpen className="w-5 h-5 text-purple-400" />
           {t.default_routines}
         </h3>
@@ -243,17 +251,17 @@ export default function ImportarRutinas({
           {DEFAULT_ROUTINES.map((routine) => (
             <div
               key={routine.id}
-              className="bg-slate-950/40 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between"
+              className="bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl p-5 flex flex-col justify-between"
             >
               <div>
-                <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-bold">
                   {routine.autor}
                 </span>
-                <h4 className="font-bold text-white text-base font-outfit mt-1">{routine.nombre}</h4>
-                <ul className="mt-3.5 space-y-1.5 text-xs text-slate-400 font-light list-disc pl-4">
+                <h4 className="font-bold text-[var(--text-title)] text-base font-outfit mt-1">{routine.nombre}</h4>
+                <ul className="mt-3.5 space-y-1.5 text-xs text-[var(--text-muted)] font-light list-disc pl-4">
                   {routine.habitos.map((h, i) => (
                     <li key={i}>
-                      <span className="font-medium text-slate-200">{h.nombre}</span> ({h.horaSugerida})
+                      <span className="font-medium text-[var(--text-main)]">{h.nombre}</span> ({h.horaSugerida})
                     </li>
                   ))}
                 </ul>
@@ -261,7 +269,7 @@ export default function ImportarRutinas({
 
               <button
                 onClick={() => setSelectedRoutine(routine)}
-                className="w-full mt-5 py-2 bg-slate-800 hover:bg-slate-700/80 text-purple-400 hover:text-purple-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer border border-slate-700/50"
+                className="w-full mt-5 py-2 bg-[var(--bg-panel-hover)] text-purple-400 hover:text-purple-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer border border-[var(--border-color)]"
               >
                 <Import className="w-4 h-4" /> {t.import_btn}
               </button>
@@ -271,78 +279,123 @@ export default function ImportarRutinas({
       </div>
 
       {/* Community Shared Routines */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2 font-outfit">
+      <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl p-6 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between sm:items-center">
+          <h3 className="text-lg font-bold text-[var(--text-title)] flex items-center gap-2 font-outfit">
             <Users className="w-5 h-5 text-purple-400" />
             {t.community_routines}
           </h3>
           <button 
             onClick={loadCommunity}
-            className="text-xs text-purple-400 hover:text-purple-300 font-semibold cursor-pointer"
+            className="text-xs text-purple-400 hover:text-purple-300 font-semibold cursor-pointer text-right self-end sm:self-auto"
           >
             {lang === 'es' ? 'Actualizar' : 'Refresh'}
           </button>
         </div>
 
-        {loadingCommunity ? (
-          <p className="text-center py-10 text-slate-500 text-sm">Cargando galería comunitaria...</p>
-        ) : communityRoutines.length === 0 ? (
-          <p className="text-center py-10 text-slate-500 text-sm">No hay rutinas públicas todavía. ¡Sé el primero en compartir!</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {communityRoutines.map((routine) => (
-              <div
-                key={routine.id}
-                className="bg-slate-950/40 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between"
-              >
-                <div>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
-                    Por: {routine.autor}
-                  </span>
-                  <h4 className="font-bold text-white text-base font-outfit mt-1">{routine.nombre}</h4>
-                  <ul className="mt-3.5 space-y-1.5 text-xs text-slate-400 font-light list-disc pl-4">
-                    {routine.habitos.map((h, i) => (
-                      <li key={i}>
-                        <span className="font-medium text-slate-200">{h.nombre}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+        {/* Search / Share Code Input */}
+        <div className="w-full">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={lang === 'es' ? 'Buscar rutina por nombre, autor o código de compartir...' : 'Search routine by name, author or share code...'}
+            className="w-full px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl focus:outline-none focus:border-purple-500 text-[var(--text-main)] text-sm placeholder:text-[var(--text-muted)] font-outfit"
+          />
+        </div>
 
-                <button
-                  onClick={() => setSelectedRoutine(routine)}
-                  className="w-full mt-5 py-2 bg-slate-800 hover:bg-slate-700/80 text-purple-400 hover:text-purple-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer border border-slate-700/50"
-                >
-                  <Import className="w-4 h-4" /> {t.import_btn}
-                </button>
+        {loadingCommunity ? (
+          <p className="text-center py-10 text-[var(--text-muted)] text-sm">Cargando galería comunitaria...</p>
+        ) : communityRoutines.length === 0 ? (
+          <p className="text-center py-10 text-[var(--text-muted)] text-sm">No hay rutinas públicas todavía. ¡Sé el primero en compartir!</p>
+        ) : (
+          (() => {
+            const filteredCommunity = communityRoutines.filter(routine => {
+              if (!searchQuery.trim()) return true;
+              const query = searchQuery.toLowerCase().trim();
+              return (routine.nombre || '').toLowerCase().includes(query) || 
+                     (routine.id || '').toLowerCase() === query || 
+                     (routine.id || '').toLowerCase().includes(query) ||
+                     (routine.autor || '').toLowerCase().includes(query);
+            });
+
+            if (filteredCommunity.length === 0) {
+              return (
+                <p className="text-center py-10 text-[var(--text-muted)] text-sm">
+                  {lang === 'es' ? 'No se encontraron rutinas para esta búsqueda.' : 'No routines found for this search.'}
+                </p>
+              );
+            }
+
+            return (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {filteredCommunity.map((routine) => (
+                  <div
+                    key={routine.id}
+                    className="bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl p-5 flex flex-col justify-between"
+                  >
+                    <div>
+                      <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-bold">
+                        Por: {routine.autor}
+                      </span>
+                      <h4 className="font-bold text-[var(--text-title)] text-base font-outfit mt-1">{routine.nombre}</h4>
+                      
+                      {/* Copyable Share Code */}
+                      <div 
+                        onClick={() => {
+                          navigator.clipboard.writeText(routine.id);
+                          alert(lang === 'es' ? '¡Código copiado al portapapeles!' : 'Code copied to clipboard!');
+                        }}
+                        className="mt-1.5 text-[9px] font-mono text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 px-2 py-1 border border-purple-500/20 rounded w-fit cursor-pointer select-all font-semibold active:scale-95 transition"
+                        title={lang === 'es' ? 'Haz clic para copiar el código' : 'Click to copy code'}
+                      >
+                        Code: {routine.id}
+                      </div>
+
+                      <ul className="mt-3.5 space-y-1.5 text-xs text-[var(--text-muted)] font-light list-disc pl-4">
+                        {routine.habitos.map((h, i) => (
+                          <li key={i}>
+                            <span className="font-medium text-[var(--text-main)]">{h.nombre}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <button
+                      onClick={() => setSelectedRoutine(routine)}
+                      className="w-full mt-5 py-2 bg-[var(--bg-panel-hover)] text-purple-400 hover:text-purple-300 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer border border-[var(--border-color)]"
+                    >
+                      <Import className="w-4 h-4" /> {t.import_btn}
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            );
+          })()
         )}
       </div>
 
       {/* Share Routine Modal */}
       {isSharingModalOpen && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <form
             onSubmit={handleShareSubmit}
-            className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl animate-scaleIn space-y-5"
+            className="w-full max-w-md bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl p-6 shadow-2xl animate-scaleIn space-y-5 max-h-[90vh] overflow-y-auto scrollbar-none"
           >
             <div className="flex justify-between items-center pb-2">
-              <h3 className="text-xl font-bold text-white font-outfit">
+              <h3 className="text-xl font-bold text-[var(--text-title)] font-outfit">
                 {lang === 'es' ? 'Publicar Rutina' : 'Publish Routine'}
               </h3>
               <button
                 type="button"
                 onClick={() => setIsSharingModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-200 rounded-xl hover:bg-slate-800 transition cursor-pointer"
+                className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] rounded-xl hover:bg-[var(--bg-panel-hover)] transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-slate-400 text-sm">
+            <p className="text-[var(--text-muted)] text-sm">
               {lang === 'es' 
                 ? 'Elige un nombre descriptivo único para tu rutina pública. Los demás usuarios la verán en la galería.'
                 : 'Choose a unique descriptive name for your public routine. Other users will see it in the gallery.'}
@@ -356,7 +409,7 @@ export default function ImportarRutinas({
             )}
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-2">
                 {lang === 'es' ? 'Nombre de la Rutina' : 'Routine Name'}
               </label>
               <input
@@ -365,16 +418,16 @@ export default function ImportarRutinas({
                 value={shareRoutineName}
                 onChange={(e) => setShareRoutineName(e.target.value)}
                 placeholder="Ej. Mi rutina de musculación, Enfoque Mañanero..."
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl focus:outline-none focus:border-purple-500 text-slate-100 text-sm placeholder:text-slate-600"
+                className="w-full px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl focus:outline-none focus:border-purple-500 text-[var(--text-main)] text-sm placeholder:text-[var(--text-muted)]"
                 maxLength="40"
               />
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-800/80">
+            <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border-color)]">
               <button
                 type="button"
                 onClick={() => setIsSharingModalOpen(false)}
-                className="px-4 py-2.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 font-semibold rounded-xl text-sm transition cursor-pointer"
+                className="px-4 py-2.5 text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-panel-hover)] font-semibold rounded-xl text-sm transition cursor-pointer"
               >
                 {common.cancel}
               </button>
@@ -399,28 +452,28 @@ export default function ImportarRutinas({
 
       {/* Import Modal */}
       {selectedRoutine && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl animate-scaleIn space-y-5">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-3xl p-6 shadow-2xl animate-scaleIn space-y-5 max-h-[90vh] overflow-y-auto scrollbar-none">
             <div className="flex justify-between items-center pb-2">
-              <h3 className="text-xl font-bold text-white font-outfit">
+              <h3 className="text-xl font-bold text-[var(--text-title)] font-outfit">
                 {t.import_modal_title}
               </h3>
               <button
                 type="button"
                 onClick={() => setSelectedRoutine(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-200 rounded-xl hover:bg-slate-800 transition cursor-pointer"
+                className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text-main)] rounded-xl hover:bg-[var(--bg-panel-hover)] transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-slate-400 text-sm">
+            <p className="text-[var(--text-muted)] text-sm">
               {t.import_modal_desc}
             </p>
 
             <div className="space-y-3">
               {/* Current Profile */}
-              <label className="flex items-center gap-3 p-3.5 bg-slate-950/60 border border-slate-800 hover:border-purple-500/40 rounded-2xl cursor-pointer transition select-none">
+              <label className="flex items-center gap-3 p-3.5 bg-[var(--bg-input)] border border-[var(--border-color)] hover:border-purple-500/40 rounded-2xl cursor-pointer transition select-none">
                 <input
                   type="radio"
                   name="importTarget"
@@ -428,13 +481,13 @@ export default function ImportarRutinas({
                   onChange={() => setImportTarget('current')}
                   className="text-purple-600 focus:ring-purple-500"
                 />
-                <div className="text-sm font-semibold text-slate-200">
+                <div className="text-sm font-semibold text-[var(--text-main)]">
                   {t.current_profile.replace('{name}', activeProfile)}
                 </div>
               </label>
 
               {/* New Profile */}
-              <label className="flex flex-col gap-3 p-3.5 bg-slate-950/60 border border-slate-800 hover:border-purple-500/40 rounded-2xl cursor-pointer transition select-none">
+              <label className="flex flex-col gap-3 p-3.5 bg-[var(--bg-input)] border border-[var(--border-color)] hover:border-purple-500/40 rounded-2xl cursor-pointer transition select-none">
                 <div className="flex items-center gap-3">
                   <input
                     type="radio"
@@ -443,7 +496,7 @@ export default function ImportarRutinas({
                     onChange={() => setImportTarget('new')}
                     className="text-purple-600 focus:ring-purple-500"
                   />
-                  <div className="text-sm font-semibold text-slate-200">
+                  <div className="text-sm font-semibold text-[var(--text-main)]">
                     {t.new_profile_option}
                   </div>
                 </div>
@@ -455,18 +508,18 @@ export default function ImportarRutinas({
                     placeholder={t.new_profile_name}
                     value={newProfileName}
                     onChange={(e) => setNewProfileName(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-purple-500 text-slate-100 text-xs placeholder:text-slate-600"
+                    className="w-full px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:border-purple-500 text-[var(--text-main)] text-xs placeholder:text-[var(--text-muted)]"
                     onClick={(e) => e.stopPropagation()}
                   />
                 )}
               </label>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-800/80">
+            <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border-color)]">
               <button
                 type="button"
                 onClick={() => setSelectedRoutine(null)}
-                className="px-4 py-2.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 font-semibold rounded-xl text-sm transition cursor-pointer"
+                className="px-4 py-2.5 text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-panel-hover)] font-semibold rounded-xl text-sm transition cursor-pointer"
               >
                 {common.cancel}
               </button>
